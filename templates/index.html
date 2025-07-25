@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Employee Salary Predictor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #4a5568;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            font-size: 1.2em;
+        }
+
+        .project-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .prediction-form {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .form-group select, .form-group input {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select:focus, .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .predict-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .result-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .salary-display {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .salary-amount {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .graph-container {
+            text-align: center;
+            margin-top: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .graph-container h3 {
+            margin-bottom: 15px;
+            color: #4a5568;
+        }
+
+        .graph-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f7fafc;
+        }
+
+        .error-positive {
+            color: #e53e3e;
+        }
+
+        .error-negative {
+            color: #38a169;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .salary-amount {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><span class="header-icon">🎓</span> University Employee Salary Predictor</h1>
+            <p>Advanced Machine Learning Model for Academic Institution Salary Prediction</p>
+        </div>
+
+        <div class="prediction-form">
+            <h2>🔮 Predict University Employee Salary</h2>
+            <form id="predictionForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="education">Education Level</label>
+                        <select id="education" required>
+                            <option value="Bachelor">Bachelor's Degree</option>
+                            <option value="Master">Master's Degree</option>
+                            <option value="PhD">PhD</option>
+                            <option value="PostDoc">Post Doctorate</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <select id="department" required>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Medicine">Medicine</option>
+                            <option value="Business">Business</option>
+                            <option value="Science">Science</option>
+                            <option value="Arts">Arts</option>
+                            <option value="Social">Social Sciences</option>
+                            <option value="Administration">Administration</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <select id="position" required>
+                            <option value="Research Assistant">Research Assistant</option>
+                            <option value="Lecturer">Lecturer</option>
+                            <option value="Assistant Professor">Assistant Professor</option>
+                            <option value="Associate Professor">Associate Professor</option>
+                            <option value="Full Professor">Full Professor</option>
+                            <option value="Research Scientist">Research Scientist</option>
+                            <option value="Department Head">Department Head</option>
+                            <option value="Dean">Dean</option>
+                            <option value="Administrative Staff">Administrative Staff</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" min="22" max="80" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <select id="location" required>
+                            <option value="Urban">Urban</option>
+                            <option value="Suburban">Suburban</option>
+                            <option value="Rural">Rural</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="research">Research Publications</label>
+                        <input type="number" id="research" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="grants">Grant Amount ($)</label>
+                        <input type="number" id="grants" min="0">
+                    </div>
+                </div>
+                <button type="submit" class="predict-btn">Predict Salary</button>
+            </form>
+        </div>
+
+        <div class="result-section" id="resultSection" style="display: none;">
+            <div class="loading" id="loading">Calculating your university salary...</div>
+            <div id="salaryResult" style="display: none;">
+                <div class="salary-display">
+                    <div class="salary-amount" id="predictedSalary">$0</div>
+                    <p>Predicted Annual Salary</p>
+                </div>
+                <div class="graph-container" id="graphContainer" style="display: none;">
+                    <h3>📊 Salary vs Experience Analysis</h3>
+                    <img id="graphImg" src="" alt="Salary vs Experience Graph" style="display: none;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = {
+                education: document.getElementById('education').value,
+                department: document.getElementById('department').value,
+                position: document.getElementById('position').value,
+                experience: parseInt(document.getElementById('experience').value),
+                age: parseInt(document.getElementById('age').value),
+                location: document.getElementById('location').value,
+                research: parseInt(document.getElementById('research').value) || 0,
+                grants: parseInt(document.getElementById('grants').value) || 0
+            };
+
+            const resultSection = document.getElementById('resultSection');
+            const loading = document.getElementById('loading');
+            const salaryResult = document.getElementById('salaryResult');
+            const graphContainer = document.getElementById('graphContainer');
+            const graphImg = document.getElementById('graphImg');
+
+            // Show loading state
+            resultSection.style.display = 'block';
+            loading.style.display = 'block';
+            salaryResult.style.display = 'none';
+            graphContainer.style.display = 'none';
+            graphImg.style.display = 'none';
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) throw new Error(data.error);
+                
+                // Update salary display
+                document.getElementById('predictedSalary').textContent = 
+                    `$${data.predicted_salary.toLocaleString()}`;
+                
+                // Hide loading and show results
+                loading.style.display = 'none';
+                salaryResult.style.display = 'block';
+
+                // Load and show graph with cache-busting
+                const timestamp = new Date().getTime();
+                graphImg.src = `/plot.png?ts=${timestamp}`;
+                
+                // Show graph container and image when image loads
+                graphImg.onload = function() {
+                    graphContainer.style.display = 'block';
+                    graphImg.style.display = 'block';
+                };
+                
+                // Handle image load errors
+                graphImg.onerror = function() {
+                    console.error('Failed to load graph image');
+                    graphContainer.innerHTML = '<p style="color: #dc2626;">Graph could not be loaded. Please try again.</p>';
+                    graphContainer.style.display = 'block';
+                };
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loading.textContent = 'Error predicting salary. Please try again.';
+                loading.style.color = '#dc2626';
+            });
+        });
+    </script>
+</body>
+</html>
